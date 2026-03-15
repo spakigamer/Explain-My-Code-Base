@@ -59,7 +59,7 @@ function HomePage() {
       </nav>
 
       {/* Main Content */}
-      <main style={{ position: 'relative', zIndex: 10, maxWidth: '80rem', margin: '0 auto', padding: '3rem 1.5rem' }}>
+      <main className="app-main-content">
         
         {/* Hero Section */}
         <div className="hero-section">
