@@ -442,7 +442,7 @@ function DocumentationPage() {
 
             <p className="docs-text">
               The backend exposes a simple REST API. All endpoints are served from{' '}
-              <code>http://localhost:5000/api</code>.
+              <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api</code>.
             </p>
 
             <div className="docs-table-wrapper">
@@ -745,7 +745,7 @@ npm install`}</pre>
             <p className="docs-text"><strong>3. Start the backend server:</strong></p>
             <div className="docs-code-block" data-lang="bash">
               <pre>{`npm run dev
-# Server starts at http://localhost:5000`}</pre>
+# Server starts at ${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}`}</pre>
             </div>
 
             <p className="docs-text"><strong>4. Install frontend dependencies (in a new terminal):</strong></p>

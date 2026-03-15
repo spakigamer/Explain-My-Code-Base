@@ -23,7 +23,8 @@ function HomePage() {
     setSelectedNode(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/analyze', { repoUrl: url });
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+      const response = await axios.post(`${baseUrl}/api/analyze`, { repoUrl: url });
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to analyze repository. Make sure the URL is public and valid.');
@@ -52,7 +53,7 @@ function HomePage() {
           </Link>
           <div className="app-nav-links">
             <Link to="/docs" style={{ color: '#64748b', textDecoration: 'none' }}>Documentation</Link>
-            <a href="#" style={{ color: '#64748b', textDecoration: 'none' }}>GitHub Project</a>
+            <a href="https://github.com/spakigamer/Explain-My-Code-Base" style={{ color: '#64748b', textDecoration: 'none' }}>GitHub Project</a>
           </div>
         </div>
       </nav>
