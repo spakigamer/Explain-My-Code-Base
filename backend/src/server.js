@@ -31,10 +31,23 @@ app.use(express.json());
 
 app.use('/api', analyzeRoutes);
 
+// Health check endpoints
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'Backend is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Backend is running' });
+  res.json({ 
+    status: 'Backend is running',
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
