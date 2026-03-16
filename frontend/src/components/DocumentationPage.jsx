@@ -64,7 +64,7 @@ function DocumentationPage() {
           </Link>
           <div className="app-nav-links">
             <Link to="/docs" style={{ color: '#818cf8' }}>Documentation</Link>
-            <a href="#">GitHub Project</a>
+            <a href="https://github.com/spakigamer/Explain-My-Code-Base">GitHub Project</a>
           </div>
         </div>
       </nav>
