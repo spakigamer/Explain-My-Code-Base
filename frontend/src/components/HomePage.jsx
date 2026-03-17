@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Search, Info, Github, Layers, Code, Zap, Loader2, GitBranch, Share2, History, User, Calendar } from 'lucide-react';
+import { Search, Info, Github, Layers, Code, Zap, Loader2, GitBranch, Share2, History, User, Calendar, Activity, Map as MapIcon } from 'lucide-react';
 import GraphView from './GraphView';
 import EvolutionGraph from './EvolutionGraph';
+import HealthDashboard from './HealthDashboard';
+import ArchitectureMap from './ArchitectureMap';
 import { Link } from 'react-router-dom';
 
 function HomePage() {
@@ -65,16 +67,15 @@ function HomePage() {
         <div className="hero-section">
           <div className="hero-badge">
             <span className="hero-badge-dot" />
-            Open Source Code Analyzer
+            Advanced Code Intelligence
           </div>
           
           <h1 className="hero-title">
-            Broaden Your Horizons
+            Deep Code Intelligence
           </h1>
           
           <p className="hero-subtitle">
-            Paste a public GitHub repository URL to analyze both its
-            <strong> software architecture</strong> and <strong>branch evolution</strong>.
+            Analyze <strong>architecture</strong>, <strong>evolution</strong>, and <strong>health</strong> metrics of any GitHub repository in seconds.
           </p>
 
           {/* Search Form */}
@@ -103,8 +104,8 @@ function HomePage() {
         {loading && (
           <div className="loading-overlay">
             <div className="loading-spinner" />
-            <p className="loading-text">Analyzing repository...</p>
-            <p className="loading-subtext">This may take a moment depending on the repo size.</p>
+            <p className="loading-text">Performing deep analysis...</p>
+            <p className="loading-subtext">This involve AST parsing and Git history tracking.</p>
           </div>
         )}
 
@@ -118,35 +119,58 @@ function HomePage() {
                   onClick={() => { setActiveTab('architecture'); setSelectedNode(null); }}
                   className={`view-switcher-btn ${activeTab === 'architecture' ? 'view-switcher-btn--active-arch' : ''}`}
                 >
-                  <Share2 size={16} /> Architecture View
+                  <Share2 size={16} /> Architecture
                 </button>
                 <button 
                   onClick={() => { setActiveTab('evolution'); setSelectedNode(null); }}
                   className={`view-switcher-btn ${activeTab === 'evolution' ? 'view-switcher-btn--active-evo' : ''}`}
                 >
-                  <GitBranch size={16} /> Evolution View
+                  <GitBranch size={16} /> Evolution
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('map'); setSelectedNode(null); }}
+                  className={`view-switcher-btn ${activeTab === 'map' ? 'view-switcher-btn--active-map' : ''}`}
+                >
+                  <MapIcon size={16} /> Explorer
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('health'); setSelectedNode(null); }}
+                  className={`view-switcher-btn ${activeTab === 'health' ? 'view-switcher-btn--active-health' : ''}`}
+                >
+                  <Activity size={16} /> Health
                 </button>
               </div>
             </div>
 
-            <div className="results-grid">
-              {/* Graph Panel */}
-              <div className="graph-panel">
+            <div className={`results-grid ${(activeTab === 'health' || activeTab === 'map') ? 'results-grid--full' : ''}`}>
+              {/* Main Panel */}
+              <div className={`graph-panel ${activeTab === 'health' ? 'graph-panel--auto' : ''}`}>
                 <div className="graph-badge">
-                  <div className={`graph-badge-pill ${activeTab === 'architecture' ? 'graph-badge-pill--arch' : 'graph-badge-pill--evo'}`}>
-                    {activeTab === 'architecture' ? `${data.analyzedCount} files mapped` : `${data.evolution.nodes.length} branches tracked`}
+                  <div className={`graph-badge-pill graph-badge-pill--${activeTab}`}>
+                    {activeTab === 'architecture' && `${data.analyzedCount} files mapped`}
+                    {activeTab === 'evolution' && `${data.evolution.nodes.length} branches tracked`}
+                    {activeTab === 'health' && `Health Report Generated`}
+                    {activeTab === 'map' && `Interactive Map`}
                   </div>
                 </div>
                 
-                {activeTab === 'architecture' ? (
+                {activeTab === 'architecture' && (
                   <GraphView data={data.architecture} onNodeClick={setSelectedNode} />
-                ) : (
+                )}
+                {activeTab === 'evolution' && (
                   <EvolutionGraph data={data.evolution} onNodeClick={setSelectedNode} />
+                )}
+                {activeTab === 'health' && (
+                  <HealthDashboard healthData={data.health} />
+                )}
+                {activeTab === 'map' && (
+                  <ArchitectureMap data={data.map} onNodeClick={setSelectedNode} />
                 )}
               </div>
 
-              {/* Details Panel */}
-              <div className="details-panel">
+              {/* Details Panel - hidden in health or map view */}
+              {activeTab !== 'health' && activeTab !== 'map' && (
+                <div className="details-panel">
                 <div className="details-header">
                   {activeTab === 'architecture' 
                     ? <Info size={18} color="#818cf8" /> 
@@ -210,6 +234,7 @@ function HomePage() {
                   </div>
                 )}
               </div>
+            )}
             </div>
           </div>
         )}

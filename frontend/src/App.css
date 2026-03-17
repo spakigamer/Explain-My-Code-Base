@@ -746,6 +746,16 @@
   }
 }
 
+.results-grid--full {
+  grid-template-columns: 1fr !important;
+}
+
+.graph-panel--auto {
+  height: auto !important;
+  min-height: 600px;
+  overflow: visible !important;
+}
+
 /* ========== Focus ring for accessibility ========== */
 .search-button:focus-visible {
   outline: 2px solid #818cf8;

@@ -1,8 +1,9 @@
 import { cloneRepository, scanDirectory } from '../services/repoService.js';
 import { analyzeRepository } from '../services/analyzerService.js';
-import { buildGraph } from '../services/graphService.js';
+import { buildGraph, buildHierarchicalGraph } from '../services/graphService.js';
 import { generateExplanations } from '../services/explanationService.js';
-import { getBranchData } from '../services/branchService.js';
+import { getBranchData, getFileModificationFrequency } from '../services/branchService.js';
+import { generateHealthReport } from '../services/healthService.js';
 import fs from 'fs-extra';
 
 export const analyzeRepo = async (req, res) => {
@@ -22,8 +23,15 @@ export const analyzeRepo = async (req, res) => {
     const { nodes: archNodes, edges: archEdges } = buildGraph(analysisResults);
     const explainedNodes = generateExplanations(archNodes);
 
+    const hierarchicalData = buildHierarchicalGraph(analysisResults);
+
     // Branch Analysis
     const branchInfo = await getBranchData(repoPath);
+    const modificationFrequency = await getFileModificationFrequency(repoPath);
+
+    // Health Analysis
+    const healthReport = generateHealthReport(archNodes, archEdges, analysisResults, modificationFrequency);
+
     const branchNodes = branchInfo.branches.map(b => ({
        id: b.id,
        label: b.label,
@@ -46,6 +54,8 @@ export const analyzeRepo = async (req, res) => {
         nodes: explainedNodes,
         edges: archEdges
       },
+      map: hierarchicalData,
+      health: healthReport,
       evolution: {
         nodes: branchNodes,
         edges: branchEdges,

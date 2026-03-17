@@ -4,13 +4,15 @@ import {
   ArrowLeft, Zap, BookOpen, Code, GitBranch, Layers, Server,
   Globe, Database, Cpu, BarChart3, FolderTree, Search, Eye,
   GitMerge, History, FileCode, Network, AlertCircle, Lightbulb,
-  Info, ChevronRight, Terminal, Box, Workflow
+  Info, ChevronRight, Terminal, Box, Workflow, Activity, Map as MapIcon
 } from 'lucide-react';
 import './DocumentationPage.css';
 
 const SECTIONS = [
   { id: 'overview', label: 'Overview' },
   { id: 'features', label: 'Key Features' },
+  { id: 'health-analyzer', label: 'Health Analyzer' },
+  { id: 'map-explorer', label: 'Map Explorer' },
   { id: 'architecture', label: 'Architecture' },
   { id: 'tech-stack', label: 'Tech Stack' },
   { id: 'how-it-works', label: 'How It Works' },
@@ -196,15 +198,112 @@ function DocumentationPage() {
               </div>
 
               <div className="docs-feature-item">
-                <div className="docs-feature-bullet docs-feature-bullet--amber" />
+                <div className="docs-feature-bullet docs-feature-bullet--rose" />
                 <div>
-                  <div className="docs-feature-item-title">Auto-Generated File Summaries</div>
+                  <div className="docs-feature-item-title">Codebase Health Analyzer</div>
                   <div className="docs-feature-item-desc">
-                    Each file node includes an automatically generated description based on its name,
-                    exports, and functions. Identifies servers, services, routes, controllers, and UI components.
+                    Evaluates structural quality by detecting circular dependencies, unused modules, 
+                    and high-complexity files. Generates an automated health score (0-100).
                   </div>
                 </div>
               </div>
+
+              <div className="docs-feature-item">
+                <div className="docs-feature-bullet docs-feature-bullet--cyan" />
+                <div>
+                  <div className="docs-feature-item-title">Codebase Map Explorer</div>
+                  <div className="docs-feature-item-desc">
+                    A zoomable architecture interface representing the repository like a map. 
+                    Navigate through layers: Project {"->"} Folders {"->"} Files {"->"} Functions.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ====== HEALTH ANALYZER ====== */}
+          <section id="health-analyzer" className="docs-section">
+            <div className="docs-section-header">
+              <div className="docs-section-icon docs-section-icon--rose">
+                <Activity size={18} />
+              </div>
+              <h2 className="docs-section-title">Codebase Health Analyzer</h2>
+            </div>
+
+            <p className="docs-text">
+              The health analyzer evaluates the repository quality by computing several metrics from the 
+              dependency graph, AST data, and Git history.
+            </p>
+
+            <div className="docs-code-block" data-lang="math">
+              <pre>{`Score = 100
+Score -= (CircularDependencies * 5)
+Score -= (UnusedModules * 2)
+Score -= (HighComplexityModules * 3)
+Normalized between 0 and 100`}</pre>
+            </div>
+
+            <div className="docs-feature-list">
+              <div className="docs-feature-item">
+                <div className="docs-feature-bullet docs-feature-bullet--rose" />
+                <div>
+                  <div className="docs-feature-item-title">Circular Dependency Detection</div>
+                  <div className="docs-feature-item-desc">
+                    Uses <strong>Depth First Search (DFS)</strong> with recursion stacks to identify cycles 
+                    in the module dependency graph.
+                  </div>
+                </div>
+              </div>
+              <div className="docs-feature-item">
+                <div className="docs-feature-bullet docs-feature-bullet--amber" />
+                <div>
+                  <div className="docs-feature-item-title">Complexity Estimation</div>
+                  <div className="docs-feature-item-desc">
+                    Measures <strong>Maximum Nesting Depth</strong> and <strong>Function Count</strong> per file 
+                    by traversing the Babel Abstract Syntax Tree.
+                  </div>
+                </div>
+              </div>
+              <div className="docs-feature-item">
+                <div className="docs-feature-bullet docs-feature-bullet--indigo" />
+                <div>
+                  <div className="docs-feature-item-title">Volatility Tracking</div>
+                  <div className="docs-feature-item-desc">
+                    Analyzes Git logs to find the most frequently modified files (volatile modules) 
+                    which might be hotspots for potential bugs.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ====== MAP EXPLORER ====== */}
+          <section id="map-explorer" className="docs-section">
+            <div className="docs-section-header">
+              <div className="docs-section-icon docs-section-icon--cyan">
+                <MapIcon size={18} />
+              </div>
+              <h2 className="docs-section-title">Codebase Map Explorer</h2>
+            </div>
+
+            <p className="docs-text">
+              The Map Explorer provides a hierarchical, zoomable view of the entire repository structure. 
+              It allows developers to explore the codebase from a birds-eye view down to individual functions.
+            </p>
+
+            <div className="docs-arch-grid">
+                <div className="docs-arch-card" style={{ '--card-accent': '#06b6d4' }}>
+                    <h4>Zoom Level 1 & 2</h4>
+                    <p>Entire project and major architectural modules (folders).</p>
+                </div>
+                <div className="docs-arch-card" style={{ '--card-accent': '#10b981' }}>
+                    <h4>Zoom Level 3</h4>
+                    <p>Individual files showing their position in the folder hierarchy.</p>
+                </div>
+                <div className="docs-arch-card" style={{ '--card-accent': '#a78bfa' }}>
+                    <h4>Zoom Level 4</h4>
+                    <p>Granular detail: functions and classes inside files.</p>
+                </div>
             </div>
           </section>
 
@@ -510,6 +609,22 @@ function DocumentationPage() {
         { "id": "abc123", "message": "Initial commit", "author": "dev", "timestamp": "..." }
       ]
     }
+  },
+  "map": {
+    "nodes": [
+        { "id": "src/api", "label": "api", "type": "module", "parentId": "src" },
+        { "id": "src/api/auth.js", "label": "auth.js", "type": "file", "parentId": "src/api", "info": { "complexity": {...} } },
+        { "id": "src/api/auth.js::login", "label": "login", "type": "function", "parentId": "src/api/auth.js" }
+    ],
+    "edges": [...]
+  },
+  "health": {
+    "totalModules": 42,
+    "circularDependencies": 3,
+    "unusedModules": 5,
+    "highComplexityModules": 2,
+    "mostModifiedFile": "src/server.js",
+    "architectureScore": 76
   },
   "fileCount": 42,
   "analyzedCount": 18

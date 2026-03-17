@@ -5,6 +5,7 @@ import path from 'path';
 
 export const analyzeFile = async (filePath) => {
   const content = await fs.readFile(filePath, 'utf-8');
+  const lines = content.split('\n');
   
   try {
     const ast = parse(content, {
@@ -17,9 +18,29 @@ export const analyzeFile = async (filePath) => {
       imports: [],
       exports: [],
       functions: [],
+      complexity: {
+        maxNestingDepth: 0,
+        functionCount: 0,
+        loc: lines.length
+      }
     };
 
+    let currentDepth = 0;
+
     traverse.default(ast, {
+      enter(path) {
+        if (path.isBlockStatement()) {
+          currentDepth++;
+          if (currentDepth > fileData.complexity.maxNestingDepth) {
+            fileData.complexity.maxNestingDepth = currentDepth;
+          }
+        }
+      },
+      exit(path) {
+        if (path.isBlockStatement()) {
+          currentDepth--;
+        }
+      },
       ImportDeclaration({ node }) {
         fileData.imports.push(node.source.value);
       },
@@ -31,7 +52,14 @@ export const analyzeFile = async (filePath) => {
         }
       },
       FunctionDeclaration({ node }) {
+        fileData.complexity.functionCount++;
         if (node.id) fileData.functions.push(node.id.name);
+      },
+      FunctionExpression() {
+        fileData.complexity.functionCount++;
+      },
+      ArrowFunctionExpression() {
+        fileData.complexity.functionCount++;
       }
     });
 

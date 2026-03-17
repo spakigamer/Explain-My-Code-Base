@@ -88,3 +88,21 @@ export const getBranchData = async (repoPath) => {
     return { branches: [], commits: {} };
   }
 };
+
+export const getFileModificationFrequency = async (repoPath) => {
+  const git = simpleGit(repoPath);
+  try {
+    const log = await git.raw(['log', '--name-only', '--pretty=format:']);
+    const lines = log.split('\n').filter(line => line.trim() !== '');
+    
+    const frequency = {};
+    lines.forEach(file => {
+      frequency[file] = (frequency[file] || 0) + 1;
+    });
+
+    return frequency;
+  } catch (error) {
+    console.error('Error getting file frequency:', error);
+    return {};
+  }
+};
