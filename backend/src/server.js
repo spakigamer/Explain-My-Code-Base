@@ -9,6 +9,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// 1. Health check endpoints (TOP priority, no CORS, tiny response)
+app.get('/health', (req, res) => res.send('OK'));
+app.get('/api/health', (req, res) => res.send('OK'));
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://explain-my-code-base.vercel.app',
@@ -29,20 +33,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Routes
 app.use('/api', analyzeRoutes);
 
-// Health check endpoints
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'Backend is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'Backend is running',
-    timestamp: new Date().toISOString()
+// Global Error Handler (Prevents large HTML stack traces from CORS or other errors)
+app.use((err, req, res, next) => {
+  console.error('Unhandled Error:', err.message);
+  res.status(err.status || 500).json({ 
+    error: 'Internal Server Error',
+    message: err.message 
   });
 });
 
